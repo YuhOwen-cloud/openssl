@@ -97,15 +97,15 @@ int PKCS12_key_gen_uni_ex(unsigned char *pass, int passlen, unsigned char *salt,
     if (ctx == NULL)
         return 0;
 
-    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST_TBL,
         (char *)EVP_MD_get0_name(md_type),
         0);
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_PASSWORD,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_PASSWORD_TBL,
         pass, passlen);
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT_TBL,
         salt, saltlen);
-    *p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_PKCS12_ID, &id);
-    *p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_ITER, &iter);
+    *p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_PKCS12_ID_TBL, &id);
+    *p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_ITER_TBL, &iter);
     *p = OSSL_PARAM_construct_end();
 
     OSSL_TRACE_BEGIN(PKCS12_KEYGEN)

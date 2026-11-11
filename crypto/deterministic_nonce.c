@@ -144,14 +144,14 @@ static EVP_KDF_CTX *kdf_setup(const char *digestname,
         goto err;
 
     p = params;
-    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST_TBL,
         (char *)digestname, 0);
     if (propq != NULL)
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_PROPERTIES,
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_PROPERTIES_TBL,
             (char *)propq, 0);
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_HMACDRBG_ENTROPY,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_HMACDRBG_ENTROPY_TBL,
         (void *)entropy, entropylen);
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_HMACDRBG_NONCE,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_HMACDRBG_NONCE_TBL,
         (void *)nonce, noncelen);
     *p = OSSL_PARAM_construct_end();
 
