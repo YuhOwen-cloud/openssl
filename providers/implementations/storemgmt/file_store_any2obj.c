@@ -106,16 +106,16 @@ static int any2obj_decode_final(void *vctx, int objtype, const char *input_type,
         OSSL_PARAM params[6], *p = params;
 
         if (data_type != NULL)
-            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE,
+            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE_TBL,
                 (char *)data_type, 0);
         if (input_type != NULL)
-            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_INPUT_TYPE,
+            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_INPUT_TYPE_TBL,
                 (char *)input_type, 0);
         if (*ctx->data_structure != '\0')
-            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_STRUCTURE,
+            *p++ = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_STRUCTURE_TBL,
                 (char *)ctx->data_structure, 0);
-        *p++ = OSSL_PARAM_construct_int(OSSL_OBJECT_PARAM_TYPE, &objtype);
-        *p++ = OSSL_PARAM_construct_octet_string(OSSL_OBJECT_PARAM_DATA,
+        *p++ = OSSL_PARAM_construct_int(OSSL_OBJECT_PARAM_TYPE_TBL, &objtype);
+        *p++ = OSSL_PARAM_construct_octet_string(OSSL_OBJECT_PARAM_DATA_TBL,
             mem->data, mem->length);
         *p = OSSL_PARAM_construct_end();
 

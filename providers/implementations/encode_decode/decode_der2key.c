@@ -345,20 +345,20 @@ next:
         OSSL_PARAM params[4];
         int object_type = OSSL_OBJECT_PKEY;
 
-        params[0] = OSSL_PARAM_construct_int(OSSL_OBJECT_PARAM_TYPE, &object_type);
+        params[0] = OSSL_PARAM_construct_int(OSSL_OBJECT_PARAM_TYPE_TBL, &object_type);
 
 #ifndef OPENSSL_NO_SM2
         if (strcmp(ctx->desc->keytype_name, "EC") == 0
             && (EC_KEY_get_flags(key) & EC_FLAG_SM2_RANGE) != 0)
-            params[1] = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE,
+            params[1] = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE_TBL,
                 "SM2", 0);
         else
 #endif
-            params[1] = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE,
+            params[1] = OSSL_PARAM_construct_utf8_string(OSSL_OBJECT_PARAM_DATA_TYPE_TBL,
                 (char *)ctx->desc->keytype_name,
                 0);
         /* The address of the key becomes the octet string */
-        params[2] = OSSL_PARAM_construct_octet_string(OSSL_OBJECT_PARAM_REFERENCE,
+        params[2] = OSSL_PARAM_construct_octet_string(OSSL_OBJECT_PARAM_REFERENCE_TBL,
             &key, sizeof(key));
         params[3] = OSSL_PARAM_construct_end();
 
