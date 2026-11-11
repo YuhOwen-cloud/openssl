@@ -4505,8 +4505,8 @@ EVP_PKEY *ssl_get_auto_dh(SSL_CONNECTION *s)
 
     tmpl = OSSL_PARAM_BLD_new();
     if (tmpl == NULL
-        || !OSSL_PARAM_BLD_push_BN(tmpl, OSSL_PKEY_PARAM_FFC_P, p)
-        || !OSSL_PARAM_BLD_push_uint(tmpl, OSSL_PKEY_PARAM_FFC_G, 2))
+        || !OSSL_PARAM_BLD_push_BN(tmpl, OSSL_PKEY_PARAM_FFC_P_TBL, p)
+        || !OSSL_PARAM_BLD_push_uint(tmpl, OSSL_PKEY_PARAM_FFC_G_TBL, 2))
         goto err;
 
     params = OSSL_PARAM_BLD_to_param(tmpl);
@@ -5011,7 +5011,7 @@ int ssl_hmac_init(SSL_HMAC *ctx, void *key, size_t len, char *md)
     OSSL_PARAM params[2], *p = params;
 
     if (ctx->ctx != NULL) {
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST, md, 0);
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST_TBL, md, 0);
         *p = OSSL_PARAM_construct_end();
         if (EVP_MAC_init(ctx->ctx, key, len, params))
             return 1;
