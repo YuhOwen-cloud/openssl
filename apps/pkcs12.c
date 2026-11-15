@@ -838,10 +838,8 @@ int pkcs12_main(int argc, char **argv)
             if (pbkdf2_param == NULL || pbmac1_param == NULL) {
                 BIO_puts(bio_err, ", Unsupported KDF or params for PBMAC1\n");
             } else {
-                const ASN1_OBJECT *prfobj;
-                int prfnid;
-                const ASN1_OBJECT *pbmac1obj;
-                int pbmacnid;
+                const ASN1_OBJECT *prfobj, *pbmac1obj;
+                int prfnid, pbmacnid;
 
                 BIO_printf(bio_err, " using PBKDF2, Iteration %ld\n",
                     ASN1_INTEGER_get(pbkdf2_param->iter));
