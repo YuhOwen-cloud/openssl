@@ -101,11 +101,7 @@ PBKDF2PARAM *PBMAC1_get1_pbkdf2_param(const X509_ALGOR *macalg)
     PBKDF2PARAM *pbkdf2_param = NULL;
     const ASN1_OBJECT *kdf_oid;
 
-    param = ASN1_TYPE_unpack_sequence(ASN1_ITEM_rptr(PBMAC1PARAM), macalg->parameter);
-    if (param == NULL) {
-        ERR_raise(ERR_LIB_PKCS12, ERR_R_PASSED_INVALID_ARGUMENT);
-        return NULL;
-    }
+    param = PBMAC1_get1_param(macalg);
 
     X509_ALGOR_get0(&kdf_oid, NULL, NULL, param->keyDerivationFunc);
     if (OBJ_obj2nid(kdf_oid) != NID_id_pbkdf2) {
