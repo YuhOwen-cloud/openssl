@@ -840,7 +840,6 @@ int pkcs12_main(int argc, char **argv)
             } else {
                 const ASN1_OBJECT *prfobj;
                 int prfnid;
-
                 const ASN1_OBJECT *pbmac1obj;
                 int pbmacnid;
 
