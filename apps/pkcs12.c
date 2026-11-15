@@ -833,12 +833,13 @@ int pkcs12_main(int argc, char **argv)
         i2a_ASN1_OBJECT(bio_err, macobj);
         if (OBJ_obj2nid(macobj) == NID_pbmac1) {
             PBKDF2PARAM *pbkdf2_param = PBMAC1_get1_pbkdf2_param(macalgid);
+            PBMAC1PARAM *pbmac1_param = PBMAC1_get1_param(macalgid);
 
-            if (pbkdf2_param == NULL) {
+            if (pbkdf2_param == NULL || pbmac1_param == NULL) {
                 BIO_puts(bio_err, ", Unsupported KDF or params for PBMAC1\n");
             } else {
-                const ASN1_OBJECT *prfobj;
-                int prfnid;
+                const ASN1_OBJECT *prfobj, *pbmac1obj;
+                int prfnid, pbmacnid;
 
                 BIO_printf(bio_err, " using PBKDF2, Iteration %ld\n",
                     ASN1_INTEGER_get(pbkdf2_param->iter));
@@ -852,8 +853,13 @@ int pkcs12_main(int argc, char **argv)
                     prfnid = OBJ_obj2nid(prfobj);
                 }
                 BIO_printf(bio_err, "PBKDF2 PRF: %s\n", OBJ_nid2sn(prfnid));
+
+                X509_ALGOR_get0(&pbmac1obj, NULL, NULL, pbmac1_param->messageAuthScheme);
+                pbmacnid = OBJ_obj2nid(pbmac1obj);
+                BIO_printf(bio_err, "Message Authentication Scheme: %s\n", OBJ_nid2sn(pbmacnid));
             }
             PBKDF2PARAM_free(pbkdf2_param);
+            PBMAC1PARAM_free(pbmac1_param);
         } else {
             BIO_printf(bio_err, ", Iteration %ld\n",
                 tmaciter != NULL ? ASN1_INTEGER_get(tmaciter) : 1L);

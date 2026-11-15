@@ -33,6 +33,11 @@ OpenSSL 4.2
 
 ### Changes between 4.1 and 4.2 [xx XXX xxxx]
 
+ * Added PBMAC1 Message Authentication Scheme in PKCS #12 info, and
+   `PBMAC1_get1_param()` as a supporting function.
+
+   *Lumi Yamori*
+
  * Added `CRYPTO_new_ex_data_ex()`, an `OSSL_LIB_CTX`-aware variant of
    `CRYPTO_new_ex_data()`.
 
