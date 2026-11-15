@@ -66,6 +66,7 @@ B<openssl> B<x509>
 [B<-clrext>]
 [B<-extfile> I<filename>]
 [B<-extensions> I<section>]
+[B<-unsigned>]
 [B<-sigopt> I<nm>:I<v>]
 [B<-badsig>]
 [B<-I<digest>>]
@@ -542,6 +543,21 @@ See the description of B<-extfile> above for details.
 
 See the L<x509v3_config(5)> manual page for details of the
 extension section format.
+
+=item B<-unsigned>
+
+When creating a certificate, do this unsigned according to RFC 9925.
+The issuer is set to the subject if it is not the NULL-DN,
+otherwise the `id-rdna-unsigned` placeholder is set.
+Any authority key identifier and issuer alternative name extensions are removed.
+
+When used with B<-req>, no signing key is needed. When used with B<-new>,
+a subject public key must still be provided with B<-key> or B<-force_pubkey>.
+
+This option cannot be used with B<-CA>, B<-set_issuer>, B<-sigopt>, or
+B<-badsig>.
+When used with B<-x509toreq>, this option is ignored and a warning is emitted;
+the request is still signed with the key provided by B<-key>.
 
 =item B<-sigopt> I<nm>:I<v>
 
