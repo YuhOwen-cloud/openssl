@@ -183,6 +183,9 @@ Kernel TLS might not support all the features of OpenSSL. For instance,
 renegotiation, and setting the maximum fragment size is not possible as of
 Linux 4.20.
 
+A TLSv1.3 KeyUpdate (see L<SSL_key_update(3)>) on a connection using kernel
+TLS is only supported if B<SSL_OP_ENABLE_KTLS_KEY_UPDATE> is also set.
+
 Note that with kernel TLS enabled some cryptographic operations are performed
 by the kernel directly and not via any available OpenSSL Providers. This might
 be undesirable if, for example, the application requires all cryptographic
@@ -197,6 +200,23 @@ option has no effect if B<SSL_OP_ENABLE_KTLS> is not enabled.
 
 This option only applies to Linux. KTLS sendfile on FreeBSD doesn't offer an
 option to disable zerocopy and always runs in this mode.
+
+=item SSL_OP_ENABLE_KTLS_KEY_UPDATE
+
+When a TLSv1.3 KeyUpdate is sent or received on a connection using kernel TLS,
+install the new traffic keys into the kernel. This requires kernel support,
+which was added in Linux 6.14; on kernels without it the connection fails with
+the reason B<SSL_R_KTLS_KEY_UPDATE_FAILED>.
+
+If this option is not set, L<SSL_key_update(3)> fails with
+B<SSL_R_KTLS_KEY_UPDATE_FAILED> when kernel TLS is used for sending, and the
+connection remains usable. A KeyUpdate received from the peer cannot be
+refused, so it is a fatal error with the same reason if kernel TLS is used in
+the affected direction. Once kernel TLS is active there is no way to fall back
+to the user space implementation. Applications that need key updates without
+kernel support should not enable kernel TLS for TLSv1.3 connections.
+
+This option has no effect if B<SSL_OP_ENABLE_KTLS> is not enabled.
 
 =item SSL_OP_ENABLE_MIDDLEBOX_COMPAT
 

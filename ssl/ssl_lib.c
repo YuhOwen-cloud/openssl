@@ -3230,6 +3230,19 @@ int SSL_key_update(SSL *s, int updatetype)
         return 0;
     }
 
+#ifndef OPENSSL_NO_KTLS
+    /*
+     * The kernel holds our write keys, so refuse before sending a KeyUpdate
+     * we could not follow up with new keys. The connection remains usable.
+     */
+    if (sc->wbio != NULL && BIO_get_ktls_send(sc->wbio)
+        && (sc->options & SSL_OP_ENABLE_KTLS_KEY_UPDATE) == 0) {
+        ERR_raise_data(ERR_LIB_SSL, SSL_R_KTLS_KEY_UPDATE_FAILED,
+            "SSL_OP_ENABLE_KTLS_KEY_UPDATE is not set");
+        return 0;
+    }
+#endif
+
     /*
      * RFC 9147 section 5.8.4: implementations MUST NOT send a KeyUpdate if
      * an earlier one has not yet been acknowledged. key_update_write_pending
