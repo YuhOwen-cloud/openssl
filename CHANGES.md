@@ -205,6 +205,18 @@ OpenSSL 4.2
 
    *Alex Gaynor*
 
+ * Added `SSL_OP_ENABLE_KTLS_KEY_UPDATE` (`KTLSKeyUpdate` in `SSL_CONF`) to
+   support TLSv1.3 KeyUpdate with Kernel TLS (KTLS) by installing new traffic
+   keys into the kernel, which requires Linux 6.14 or later. Without it,
+   `SSL_key_update()` fails when KTLS is used for sending, and a KeyUpdate
+   received from the peer is fatal if KTLS is used in the affected direction.
+   Applications that relied on KeyUpdate working with KTLS on Linux 6.14 or
+   later must now set this option. Failures are reported with the new
+   `SSL_R_KTLS_KEY_UPDATE_FAILED` reason. A KeyUpdate no longer switches a
+   userspace record layer to KTLS.
+
+   *Daiki Ueno*
+
 OpenSSL 4.1
 -----------
 

@@ -1251,6 +1251,28 @@ void ossl_ssl_set_custom_record_layer(SSL_CONNECTION *s,
     s->rlayer.rlarg = rlarg;
 }
 
+#ifndef OPENSSL_NO_KTLS
+/*
+ * Are we installing new application traffic keys due to a TLSv1.3 KeyUpdate
+ * (sent or received), as opposed to the initial handshake?
+ */
+static int ssl_is_tls13_key_update(SSL_CONNECTION *s)
+{
+    if (!SSL_CONNECTION_IS_TLS13(s))
+        return 0;
+
+    switch (s->statem.hand_state) {
+    case TLS_ST_CR_KEY_UPDATE:
+    case TLS_ST_CW_KEY_UPDATE:
+    case TLS_ST_SR_KEY_UPDATE:
+    case TLS_ST_SW_KEY_UPDATE:
+        return 1;
+    default:
+        return 0;
+    }
+}
+#endif
+
 static const OSSL_RECORD_METHOD *ssl_select_next_record_layer(SSL_CONNECTION *s,
     int direction,
     int level)
@@ -1266,6 +1288,18 @@ static const OSSL_RECORD_METHOD *ssl_select_next_record_layer(SSL_CONNECTION *s,
     }
 
 #ifndef OPENSSL_NO_KTLS
+    /*
+     * A TLSv1.3 KeyUpdate rekeys an existing KTLS record layer in the kernel,
+     * but never switches a userspace record layer over to KTLS mid-connection
+     */
+    if (ssl_is_tls13_key_update(s)) {
+        const OSSL_RECORD_METHOD *curr = direction == OSSL_RECORD_DIRECTION_READ
+            ? s->rlayer.rrlmethod
+            : s->rlayer.wrlmethod;
+
+        return curr;
+    }
+
     /* KTLS does not support renegotiation */
     if (level == OSSL_RECORD_PROTECTION_LEVEL_APPLICATION
         && (s->options & SSL_OP_ENABLE_KTLS) != 0
