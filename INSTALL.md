@@ -1054,6 +1054,10 @@ Build with support for TCP Fast Open (RFC7413). Supported on Linux, macOS and Fr
 
 Don't build with QUIC support.
 
+This only disables OpenSSL's built-in QUIC stack, instead of the QUIC TLS API.
+3rd-party applications with their own QUIC stack can still use OpenSSL to integrate TLS
+even in the event of `no-quic`.
+
 ### no-threads
 
 Don't build with support for multi-threaded applications.
@@ -1181,13 +1185,13 @@ accompanied by a corresponding compiler-specific option.
 
 ### no-{protocol}
 
-    no-{ssl|ssl3|tls|tls1|tls1_1|tls1_2|tls1_3|dtls|dtls1|dtls1_2}
+    no-{ssl|ssl3|tls|tls1|tls1_1|tls1_2|tls1_3|dtls|dtls1|dtls1_2|dtls1_3}
 
 Don't build support for negotiating the specified SSL/TLS protocol.
 
 If `no-tls` is selected then all of `tls1`, `tls1_1`, `tls1_2` and `tls1_3`
 are disabled.
-Similarly `no-dtls` will disable `dtls1` and `dtls1_2`.
+Similarly `no-dtls` will disable `dtls1`, `dtls1_2` and `dtls1_3`.
 `no-ssl` and `no-ssl3` are deprecated and do nothing.
 OpenSSL will still provide the methods for applications to explicitly select
 the individual protocol versions.
