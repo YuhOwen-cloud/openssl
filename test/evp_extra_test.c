@@ -7120,6 +7120,102 @@ err:
     return testresult;
 }
 
+static const struct {
+    const char *name;
+    size_t taglen;
+} aead_tag_get_params_ciphers[] = {
+    { "AES-128-GCM", 16 },
+#ifndef OPENSSL_NO_OCB
+    { "AES-128-OCB", 16 },
+#endif
+    { "CHACHA20-POLY1305", 16 },
+    { "AES-128-CCM", 14 }
+};
+
+static int test_evp_aead_tag_get_params(int idx)
+{
+    const char *name = aead_tag_get_params_ciphers[idx].name;
+    size_t taglen = aead_tag_get_params_ciphers[idx].taglen;
+    unsigned char key[32] = { 0 };
+    unsigned char iv[16] = { 0 };
+    unsigned char in[32] = { 0 };
+    unsigned char out[64];
+    unsigned char tag[16];
+    unsigned char expected_tag[16];
+    EVP_CIPHER *cipher = NULL;
+    EVP_CIPHER_CTX *ctx = NULL;
+    OSSL_PARAM params[2];
+    int mode = 0;
+    int outlen = 0;
+    int testresult = 0;
+
+    if (!TEST_ptr(cipher = EVP_CIPHER_fetch(testctx, name, testpropq)))
+        return TEST_skip("cipher is not available");
+    mode = EVP_CIPHER_get_mode(cipher);
+
+    if (!TEST_ptr(ctx = EVP_CIPHER_CTX_new())
+        || !TEST_true(EVP_EncryptInit_ex2(ctx, cipher, NULL, NULL, NULL)))
+        goto err;
+
+    if (mode == EVP_CIPH_CCM_MODE) {
+        int ivlen = 12;
+        OSSL_PARAM ccm_params[3];
+
+        ccm_params[0] = OSSL_PARAM_construct_int(OSSL_CIPHER_PARAM_AEAD_IVLEN,
+            &ivlen);
+        ccm_params[1] = OSSL_PARAM_construct_octet_string(
+            OSSL_CIPHER_PARAM_AEAD_TAG, NULL, taglen);
+        ccm_params[2] = OSSL_PARAM_construct_end();
+        if (!TEST_true(EVP_CIPHER_CTX_set_params(ctx, ccm_params)))
+            goto err;
+    }
+
+    if (!TEST_true(EVP_EncryptInit_ex2(ctx, NULL, key, iv, NULL)))
+        goto err;
+
+    if (mode == EVP_CIPH_CCM_MODE
+        && !TEST_true(EVP_EncryptUpdate(ctx, NULL, &outlen, NULL,
+            (int)sizeof(in))))
+        goto err;
+
+    if (!TEST_true(EVP_EncryptUpdate(ctx, out, &outlen, in, (int)sizeof(in)))
+        || !TEST_true(EVP_EncryptFinal_ex(ctx, out + outlen, &outlen)))
+        goto err;
+
+    if (!TEST_true(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG,
+            (int)taglen, expected_tag)))
+        goto err;
+
+    params[0] = OSSL_PARAM_construct_octet_string(OSSL_CIPHER_PARAM_AEAD_TAG,
+        tag, taglen);
+    params[1] = OSSL_PARAM_construct_end();
+    if (!TEST_true(EVP_CIPHER_CTX_get_params(ctx, params))
+        || !TEST_true(OSSL_PARAM_modified(params))
+        || !TEST_size_t_eq(params[0].return_size, taglen)
+        || !TEST_mem_eq(tag, taglen, expected_tag, taglen))
+        goto err;
+
+    params[0] = OSSL_PARAM_construct_octet_string(OSSL_CIPHER_PARAM_AEAD_TAG,
+        NULL, taglen);
+    params[1] = OSSL_PARAM_construct_end();
+    if (!TEST_true(EVP_CIPHER_CTX_get_params(ctx, params))
+        || !TEST_size_t_eq(params[0].return_size, taglen))
+        goto err;
+
+    params[0] = OSSL_PARAM_construct_octet_string(OSSL_CIPHER_PARAM_AEAD_TAG,
+        NULL, 0);
+    params[1] = OSSL_PARAM_construct_end();
+    if (!TEST_true(EVP_CIPHER_CTX_get_params(ctx, params))
+        || !TEST_size_t_eq(params[0].return_size, taglen))
+        goto err;
+
+    testresult = 1;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    EVP_CIPHER_free(cipher);
+    return testresult;
+}
+
 static const char *ivlen_change_ciphers[] = {
     "AES-256-GCM",
 #ifndef OPENSSL_NO_OCB
@@ -9945,6 +10041,8 @@ int setup_tests(void)
     ADD_ALL_TESTS(test_evp_reinit_seq, OSSL_NELEM(evp_reinit_tests));
     ADD_ALL_TESTS(test_evp_updated_iv, OSSL_NELEM(evp_updated_iv_tests));
     ADD_TEST(test_ccm_get_iv_with_large_buffer);
+    ADD_ALL_TESTS(test_evp_aead_tag_get_params,
+        OSSL_NELEM(aead_tag_get_params_ciphers));
 
     ADD_ALL_TESTS(test_ivlen_change, OSSL_NELEM(ivlen_change_ciphers));
     ADD_ALL_TESTS(test_iv_reuse, OSSL_NELEM(iv_state_ciphers));
