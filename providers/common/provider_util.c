@@ -132,13 +132,13 @@ int ossl_prov_set_macctx(EVP_MAC_CTX *macctx,
     int ret;
 
     if (mdname != NULL)
-        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST,
+        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST_TBL,
             (char *)mdname, 0);
     if (ciphername != NULL)
-        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_CIPHER,
+        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_CIPHER_TBL,
             (char *)ciphername, 0);
     if (properties != NULL)
-        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_PROPERTIES,
+        *mp++ = OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_PROPERTIES_TBL,
             (char *)properties, 0);
 
     *mp = OSSL_PARAM_construct_end();

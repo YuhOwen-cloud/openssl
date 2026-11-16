@@ -54,7 +54,7 @@ int EVP_PKEY_CTX_set_dh_paramgen_gindex(EVP_PKEY_CTX *ctx, int gindex)
     if ((ret = dh_paramgen_check(ctx)) <= 0)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_int(OSSL_PKEY_PARAM_FFC_GINDEX, &gindex);
+    *p++ = OSSL_PARAM_construct_int(OSSL_PKEY_PARAM_FFC_GINDEX_TBL, &gindex);
     *p = OSSL_PARAM_construct_end();
 
     return evp_pkey_ctx_set_params_strict(ctx, params);
@@ -70,7 +70,7 @@ int EVP_PKEY_CTX_set_dh_paramgen_seed(EVP_PKEY_CTX *ctx,
     if ((ret = dh_paramgen_check(ctx)) <= 0)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_SEED,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_SEED_TBL,
         (void *)seed, seedlen);
     *p = OSSL_PARAM_construct_end();
 
@@ -96,7 +96,7 @@ int EVP_PKEY_CTX_set_dh_paramgen_prime_len(EVP_PKEY_CTX *ctx, int pbits)
     if ((ret = dh_paramgen_check(ctx)) <= 0)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_size_t(OSSL_PKEY_PARAM_FFC_PBITS, &bits);
+    *p++ = OSSL_PARAM_construct_size_t(OSSL_PKEY_PARAM_FFC_PBITS_TBL, &bits);
     *p = OSSL_PARAM_construct_end();
     return evp_pkey_ctx_set_params_strict(ctx, params);
 }
@@ -110,7 +110,7 @@ int EVP_PKEY_CTX_set_dh_paramgen_subprime_len(EVP_PKEY_CTX *ctx, int qbits)
     if ((ret = dh_paramgen_check(ctx)) <= 0)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_size_t(OSSL_PKEY_PARAM_FFC_QBITS, &bits2);
+    *p++ = OSSL_PARAM_construct_size_t(OSSL_PKEY_PARAM_FFC_QBITS_TBL, &bits2);
     *p = OSSL_PARAM_construct_end();
 
     return evp_pkey_ctx_set_params_strict(ctx, params);
@@ -124,7 +124,7 @@ int EVP_PKEY_CTX_set_dh_paramgen_generator(EVP_PKEY_CTX *ctx, int gen)
     if ((ret = dh_paramgen_check(ctx)) <= 0)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_int(OSSL_PKEY_PARAM_DH_GENERATOR, &gen);
+    *p++ = OSSL_PARAM_construct_int(OSSL_PKEY_PARAM_DH_GENERATOR_TBL, &gen);
     *p = OSSL_PARAM_construct_end();
 
     return evp_pkey_ctx_set_params_strict(ctx, params);
@@ -167,7 +167,7 @@ int EVP_PKEY_CTX_set_dh_pad(EVP_PKEY_CTX *ctx, int pad)
         return -2;
     }
 
-    dh_pad_params[0] = OSSL_PARAM_construct_uint(OSSL_EXCHANGE_PARAM_PAD, &upad);
+    dh_pad_params[0] = OSSL_PARAM_construct_uint(OSSL_EXCHANGE_PARAM_PAD_TBL, &upad);
     dh_pad_params[1] = OSSL_PARAM_construct_end();
 
     return evp_pkey_ctx_set_params_strict(ctx, dh_pad_params);
@@ -252,7 +252,7 @@ int EVP_PKEY_CTX_set_dh_kdf_outlen(EVP_PKEY_CTX *ctx, int outlen)
         return -2;
     }
 
-    *p++ = OSSL_PARAM_construct_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN,
+    *p++ = OSSL_PARAM_construct_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN_TBL,
         &len);
     *p = OSSL_PARAM_construct_end();
 
@@ -272,7 +272,7 @@ int EVP_PKEY_CTX_get_dh_kdf_outlen(EVP_PKEY_CTX *ctx, int *plen)
     if (ret != 1)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN,
+    *p++ = OSSL_PARAM_construct_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN_TBL,
         &len);
     *p = OSSL_PARAM_construct_end();
 
@@ -299,7 +299,7 @@ int EVP_PKEY_CTX_set0_dh_kdf_ukm(EVP_PKEY_CTX *ctx, unsigned char *ukm, int len)
     if (ret != 1)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_EXCHANGE_PARAM_KDF_UKM,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_EXCHANGE_PARAM_KDF_UKM_TBL,
         /*
          * Cast away the const. This is read
          * only so should be safe
@@ -327,7 +327,7 @@ int EVP_PKEY_CTX_get0_dh_kdf_ukm(EVP_PKEY_CTX *ctx, unsigned char **pukm)
     if (ret != 1)
         return ret;
 
-    *p++ = OSSL_PARAM_construct_octet_ptr(OSSL_EXCHANGE_PARAM_KDF_UKM,
+    *p++ = OSSL_PARAM_construct_octet_ptr(OSSL_EXCHANGE_PARAM_KDF_UKM_TBL,
         (void **)pukm, 0);
     *p = OSSL_PARAM_construct_end();
 

@@ -1,3 +1,4 @@
+{- use OpenSSL::paramnames qw(use_param_name_table); ""; -}
 # Note that these directories are filtered in Configure.  Look for %skipdir
 # there for further explanations.
 SUBDIRS=objects buffer bio stack lhash hashtable rand evp asn1 pem x509 conf \
@@ -91,6 +92,11 @@ $CORE_COMMON=provider_core.c provider_predefined.c \
 
 SOURCE[../libcrypto]=$CORE_COMMON provider_conf.c indicator_core.c
 SOURCE[../providers/libfips.a]=$CORE_COMMON
+
+IF[{- use_param_name_table($target{sys_id}) -}]
+  SOURCE[../libcrypto]=core_names.c
+  SOURCE[../providers/libfips.a]=core_names.c
+ENDIF
 
 # Central utilities
 $UTIL_COMMON=\

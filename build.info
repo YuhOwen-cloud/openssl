@@ -1,6 +1,7 @@
 # Note that some of these directories are filtered in Configure.  Look for
 # %skipdir there for further explanations.
 {- use File::Spec::Functions;
+   use OpenSSL::paramnames qw(use_param_name_table);
 
    # The L table in crypto/err/openssl.ec names, for each error library,
    # the files mkerr.pl emits for it: fields three onwards, with NONE
@@ -548,6 +549,11 @@ GENERATE[providers/implementations/rands/seed_src_jitter.inc]=\
 GENERATE[providers/implementations/rands/test_rng.inc]=\
     providers/implementations/rands/test_rng.inc.in
 GENERATE[include/openssl/core_names.h]=include/openssl/core_names.h.in
+IF[{- use_param_name_table($target{sys_id}) -}]
+  DEPEND[]=crypto/core_names.c
+  DEPEND[crypto/core_names.c]=util/perl|OpenSSL/paramnames.pm
+  GENERATE[crypto/core_names.c]=crypto/core_names.c.in
+ENDIF
 
 IF[{- defined $target{shared_defflag} -}]
   SHARED_SOURCE[libcrypto]=libcrypto.ld

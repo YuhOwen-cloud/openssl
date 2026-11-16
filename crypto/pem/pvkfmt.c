@@ -836,12 +836,12 @@ static int derive_pvk_key(unsigned char *key, size_t keylen,
     if (ctx == NULL)
         return 0;
 
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT_TBL,
         (void *)salt, saltlen);
-    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_PASSWORD,
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_PASSWORD_TBL,
         (void *)pass, passlen);
-    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST, SN_sha1, 0);
-    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_PROPERTIES,
+    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST_TBL, SN_sha1, 0);
+    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_PROPERTIES_TBL,
         (char *)propq, 0);
     *p = OSSL_PARAM_construct_end();
 

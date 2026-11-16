@@ -781,23 +781,23 @@ static EVP_RAND_CTX *rand_new_drbg(OSSL_LIB_CTX *libctx, EVP_RAND_CTX *parent,
     settables = EVP_RAND_CTX_settable_params(ctx);
     if (OSSL_PARAM_locate_const(settables, OSSL_DRBG_PARAM_CIPHER)) {
         cipher = dgbl->rng_cipher != NULL ? dgbl->rng_cipher : "AES-256-CTR";
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_CIPHER,
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_CIPHER_TBL,
             cipher, 0);
     }
     if (dgbl->rng_digest != NULL
         && OSSL_PARAM_locate_const(settables, OSSL_DRBG_PARAM_DIGEST))
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_DIGEST,
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_DIGEST_TBL,
             dgbl->rng_digest, 0);
     if (dgbl->rng_propq != NULL)
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_PROPERTIES,
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DRBG_PARAM_PROPERTIES_TBL,
             dgbl->rng_propq, 0);
     if (OSSL_PARAM_locate_const(settables, OSSL_ALG_PARAM_MAC))
-        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_ALG_PARAM_MAC, "HMAC", 0);
+        *p++ = OSSL_PARAM_construct_utf8_string(OSSL_ALG_PARAM_MAC_TBL, "HMAC", 0);
     if (OSSL_PARAM_locate_const(settables, OSSL_DRBG_PARAM_USE_DF))
-        *p++ = OSSL_PARAM_construct_int(OSSL_DRBG_PARAM_USE_DF, &use_df);
-    *p++ = OSSL_PARAM_construct_uint(OSSL_DRBG_PARAM_RESEED_REQUESTS,
+        *p++ = OSSL_PARAM_construct_int(OSSL_DRBG_PARAM_USE_DF_TBL, &use_df);
+    *p++ = OSSL_PARAM_construct_uint(OSSL_DRBG_PARAM_RESEED_REQUESTS_TBL,
         &reseed_interval);
-    *p++ = OSSL_PARAM_construct_time_t(OSSL_DRBG_PARAM_RESEED_TIME_INTERVAL,
+    *p++ = OSSL_PARAM_construct_time_t(OSSL_DRBG_PARAM_RESEED_TIME_INTERVAL_TBL,
         &reseed_time_interval);
     *p = OSSL_PARAM_construct_end();
     if (!EVP_RAND_instantiate(ctx, 0, 0, NULL, 0, params)) {
