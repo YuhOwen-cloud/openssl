@@ -126,6 +126,11 @@ OpenSSL 4.2
 
    *Daniel Kubec*
 
+ * Added `X509_set_unsigned()` and the `openssl x509 -unsigned` option
+   for generating unsigned X.509 certificates according to RFC 9925.
+
+   *David von Oheimb*
+
  * Added optimized ML-KEM implementation for x86 platforms that support the
    AVX2 vector instruction set.
 
