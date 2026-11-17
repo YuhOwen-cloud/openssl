@@ -235,6 +235,28 @@ int ossl_quic_sstream_mark_lost_fin(QUIC_SSTREAM *qss)
     return 1;
 }
 
+int ossl_quic_sstream_requeue_in_flight(QUIC_SSTREAM *qss)
+{
+    UINT_RANGE r;
+    UINT_SET_ITEM *item;
+
+    if (qss->ring_buf.head_offset == 0)
+        return 1;
+
+    /* Every byte except the ACKED ones goes back to NEW. */
+    r.start = 0;
+    r.end = qss->ring_buf.head_offset - 1;
+    if (!ossl_uint_set_insert(&qss->new_set, &r))
+        return 0;
+
+    for (item = ossl_list_uint_set_head(&qss->acked_set); item != NULL;
+        item = ossl_list_uint_set_next(item))
+        if (!ossl_uint_set_remove(&qss->new_set, &item->range))
+            return 0;
+
+    return 1;
+}
+
 int ossl_quic_sstream_mark_acked(QUIC_SSTREAM *qss,
     uint64_t start,
     uint64_t end)

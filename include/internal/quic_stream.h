@@ -200,6 +200,14 @@ int ossl_quic_sstream_mark_lost(QUIC_SSTREAM *qss,
 int ossl_quic_sstream_mark_lost_fin(QUIC_SSTREAM *qss);
 
 /*
+ * (TX packetizer use.) Marks all transmitted but unacknowledged data of the
+ * send stream for retransmission, as if it had been lost.
+ *
+ * Returns 1 on success and 0 on error.
+ */
+int ossl_quic_sstream_requeue_in_flight(QUIC_SSTREAM *qss);
+
+/*
  * (RX/ACKM use.) Marks a logical range of the send stream as having been
  * acknowledged, meaning that the storage for the data in that range of the
  * stream can be now recycled and neither that logical range of the stream nor
