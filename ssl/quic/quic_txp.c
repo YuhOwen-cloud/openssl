@@ -2141,6 +2141,22 @@ static int determine_stream_len(struct tx_helper *h,
     return determine_len(space_left, orig_len, base_hdr_len, hlen, len);
 }
 
+/*
+ * Resend unacknowledged CRYPTO data, such as the ClientHello, in a PTO probe
+ * rather than a bare PING when there is no new data (RFC 9002 s. 6.2.4).
+ */
+static int txp_requeue_crypto_for_probe(OSSL_QUIC_TX_PACKETISER *txp,
+    uint32_t pn_space)
+{
+    QUIC_SSTREAM *crypto = txp->args.crypto[pn_space];
+
+    if (ossl_ackm_get0_probe_request(txp->args.ackm)->pto[pn_space] == 0
+        || sstream_is_pending(crypto))
+        return 1;
+
+    return ossl_quic_sstream_requeue_in_flight(crypto);
+}
+
 static int txp_generate_crypto_frames(OSSL_QUIC_TX_PACKETISER *txp,
     struct txp_pkt *pkt,
     int *have_ack_eliciting)
@@ -2890,7 +2906,8 @@ static int txp_generate_for_el(OSSL_QUIC_TX_PACKETISER *txp,
 
     /* CRYPTO Frames */
     if (a.allow_crypto)
-        if (!txp_generate_crypto_frames(txp, pkt, &have_ack_eliciting))
+        if (!txp_requeue_crypto_for_probe(txp, pn_space)
+            || !txp_generate_crypto_frames(txp, pkt, &have_ack_eliciting))
             goto fatal_err;
 
     /* Stream-specific frames */
